@@ -49,7 +49,7 @@ make lint
 ## Демонстрация (asciinema)
 
 
-[![asciicast](https://asciinema.org/a/LP3deYaWukb14guv.svg)](https://asciinema.org/a/LP3deYaWukb14guv)
+![ValutaTrade Hub demo](demo.gif)
 
 
 ## Структура проекта
