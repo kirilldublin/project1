@@ -48,20 +48,8 @@ make lint
 
 ## Демонстрация (asciinema)
 
-Запишите прохождение:
-
-```bash
-asciinema rec demo.cast
-# ... сыграйте от старта до победы ...
-exit
-```
-
-После записи загрузите `demo.cast` на asciinema.org и вставьте ссылку/бейдж ниже.
-
-Пример встраивания:
-
 ```markdown
-[![asciicast](https://asciinema.org/a/<ID>.svg)](https://asciinema.org/a/<ID>)
+[![asciicast](https://asciinema.org/a/<ID>.svg)](https://asciinema.org/a/LP3deYaWukb14guv)
 ```
 
 ## Структура проекта
