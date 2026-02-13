@@ -2,10 +2,12 @@ from labyrinth_game.constants import ROOMS
 
 
 def normalize_name(raw_value: str) -> str:
+    """Нормализует пользовательский ввод для команд и предметов."""
     return raw_value.strip().lower().replace(" ", "_")
 
 
 def get_input(prompt: str = "> ") -> str:
+    """Безопасно читает ввод пользователя и обрабатывает завершение сессии."""
     try:
         return input(prompt).strip()
     except (KeyboardInterrupt, EOFError):
@@ -14,6 +16,7 @@ def get_input(prompt: str = "> ") -> str:
 
 
 def show_inventory(game_state: dict) -> None:
+    """Выводит содержимое инвентаря игрока."""
     inventory = game_state["player_inventory"]
     if not inventory:
         print("Инвентарь пуст.")
@@ -23,6 +26,7 @@ def show_inventory(game_state: dict) -> None:
 
 
 def move_player(game_state: dict, direction: str) -> None:
+    """Перемещает игрока в соседнюю комнату при доступном выходе."""
     current_room = game_state["current_room"]
     room = ROOMS[current_room]
     normalized_direction = normalize_name(direction)
@@ -50,6 +54,7 @@ def move_player(game_state: dict, direction: str) -> None:
 
 
 def take_item(game_state: dict, item_name: str) -> None:
+    """Добавляет предмет из комнаты в инвентарь игрока."""
     if not item_name:
         print("Укажите предмет: take <item>.")
         return
@@ -72,6 +77,7 @@ def take_item(game_state: dict, item_name: str) -> None:
 
 
 def use_item(game_state: dict, item_name: str) -> None:
+    """Применяет предмет из инвентаря и выполняет его игровой эффект."""
     if not item_name:
         print("Укажите предмет: use <item>.")
         return

@@ -17,6 +17,7 @@ from labyrinth_game.utils import (
 
 
 def process_command(game_state: dict, command_line: str, commands: dict) -> None:
+    """Разбирает пользовательский ввод и вызывает обработчик игровой команды."""
     raw_parts = command_line.strip().lower().split(maxsplit=1)
 
     if not raw_parts:
@@ -53,6 +54,7 @@ def process_command(game_state: dict, command_line: str, commands: dict) -> None
 
 
 def main() -> None:
+    """Точка входа: инициализирует состояние игры и запускает игровой цикл."""
     game_state = {
         "player_inventory": [],
         "current_room": "entrance",

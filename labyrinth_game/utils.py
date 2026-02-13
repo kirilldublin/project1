@@ -1,10 +1,26 @@
 import math
 
-from labyrinth_game.constants import ROOMS
+from labyrinth_game.constants import (
+    ALTERNATIVE_ANSWERS,
+    EVENT_TRIGGER_MODULO,
+    EVENT_TRIGGER_SEED_OFFSET,
+    EVENT_TRIGGER_VALUE,
+    EVENT_TYPE_MODULO,
+    EVENT_TYPE_SEED_OFFSET,
+    HELP_COLUMN_WIDTH,
+    PR_SCRAMBLE_MULTIPLIER,
+    PR_SIN_MULTIPLIER,
+    PUZZLE_REWARDS,
+    ROOMS,
+    TRAP_DAMAGE_MODULO,
+    TRAP_DAMAGE_SEED_OFFSET,
+    TRAP_DEFEAT_THRESHOLD,
+)
 from labyrinth_game.player_actions import get_input
 
 
 def describe_current_room(game_state: dict) -> None:
+    """Печатает описание текущей комнаты, предметы, выходы и наличие загадки."""
     room_name = game_state["current_room"]
     room = ROOMS[room_name]
 
@@ -22,15 +38,17 @@ def describe_current_room(game_state: dict) -> None:
 
 
 def pseudo_random(seed: int, modulo: int) -> int:
+    """Возвращает предсказуемое псевдослучайное число в диапазоне [0, modulo)."""
     if modulo <= 0:
         return 0
 
-    value = math.sin(seed * 12.9898) * 43758.5453
+    value = math.sin(seed * PR_SIN_MULTIPLIER) * PR_SCRAMBLE_MULTIPLIER
     fraction = value - math.floor(value)
     return int(fraction * modulo)
 
 
 def trigger_trap(game_state: dict) -> None:
+    """Активирует ловушку: отнимает предмет или наносит урон без инвентаря."""
     print("Ловушка активирована! Пол стал дрожать...")
     inventory = game_state["player_inventory"]
     seed = game_state["steps_taken"] + len(inventory)
@@ -41,8 +59,8 @@ def trigger_trap(game_state: dict) -> None:
         print(f"Вы потеряли предмет: {lost_item}")
         return
 
-    damage_roll = pseudo_random(seed + 7, 10)
-    if damage_roll < 3:
+    damage_roll = pseudo_random(seed + TRAP_DAMAGE_SEED_OFFSET, TRAP_DAMAGE_MODULO)
+    if damage_roll < TRAP_DEFEAT_THRESHOLD:
         print("Ловушка нанесла критический урон. Вы проиграли.")
         game_state["game_over"] = True
         return
@@ -51,13 +69,17 @@ def trigger_trap(game_state: dict) -> None:
 
 
 def random_event(game_state: dict) -> None:
+    """Запускает редкое событие после перемещения игрока."""
     seed = game_state["steps_taken"]
-    event_happened = pseudo_random(seed + 3, 10)
+    event_happened = pseudo_random(
+        seed + EVENT_TRIGGER_SEED_OFFSET,
+        EVENT_TRIGGER_MODULO,
+    )
 
-    if event_happened != 0:
+    if event_happened != EVENT_TRIGGER_VALUE:
         return
 
-    event_type = pseudo_random(seed + 11, 3)
+    event_type = pseudo_random(seed + EVENT_TYPE_SEED_OFFSET, EVENT_TYPE_MODULO)
     current_room = game_state["current_room"]
 
     if event_type == 0:
@@ -79,6 +101,7 @@ def random_event(game_state: dict) -> None:
 
 
 def solve_puzzle(game_state: dict) -> None:
+    """Проверяет ответ на загадку и выдает награду за успешное решение."""
     room_name = game_state["current_room"]
     room = ROOMS[room_name]
     puzzle = room["puzzle"]
@@ -91,12 +114,7 @@ def solve_puzzle(game_state: dict) -> None:
     print(question)
     user_answer = get_input("Ваш ответ: ").strip().lower()
 
-    alternatives = {
-        "10": {"10", "десять"},
-        "шаг шаг шаг": {"шаг шаг шаг"},
-        "резонанс": {"резонанс"},
-    }
-    accepted_answers = alternatives.get(correct_answer, {correct_answer})
+    accepted_answers = ALTERNATIVE_ANSWERS.get(correct_answer, {correct_answer})
 
     if user_answer not in accepted_answers:
         print("Неверно. Попробуйте снова.")
@@ -107,19 +125,14 @@ def solve_puzzle(game_state: dict) -> None:
     print("Верно! Загадка решена.")
     room["puzzle"] = None
 
-    rewards = {
-        "hall": "silver_coin",
-        "trap_room": "gear_token",
-        "library": "treasure_key",
-    }
-    reward = rewards.get(room_name)
-
+    reward = PUZZLE_REWARDS.get(room_name)
     if reward and reward not in game_state["player_inventory"]:
         game_state["player_inventory"].append(reward)
         print(f"Награда за решение: {reward}")
 
 
 def attempt_open_treasure(game_state: dict) -> None:
+    """Пытается открыть сундук ключом или кодом и завершает игру победой."""
     room_name = game_state["current_room"]
     room = ROOMS[room_name]
 
@@ -151,7 +164,7 @@ def attempt_open_treasure(game_state: dict) -> None:
     _, correct_code = puzzle
     entered_code = get_input("Введите код: ").strip().lower()
 
-    accepted_codes = {"10", "десять"} if correct_code == "10" else {correct_code}
+    accepted_codes = ALTERNATIVE_ANSWERS.get(correct_code, {correct_code})
     if entered_code in accepted_codes:
         print("Код подошел. Замок открыт!")
         room["items"].remove("treasure_chest")
@@ -164,6 +177,7 @@ def attempt_open_treasure(game_state: dict) -> None:
 
 
 def show_help(commands: dict) -> None:
+    """Показывает список доступных команд и их описание."""
     print("\nДоступные команды:")
     for command, description in commands.items():
-        print(f"  {command:<16} {description}")
+        print(f"  {command:<{HELP_COLUMN_WIDTH}} {description}")

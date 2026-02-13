@@ -10,6 +10,35 @@ COMMANDS = {
     "help": "показать это сообщение",
 }
 
+HELP_COLUMN_WIDTH = 16
+
+# Константы псевдослучайного генератора.
+PR_SIN_MULTIPLIER = 12.9898
+PR_SCRAMBLE_MULTIPLIER = 43758.5453
+
+# Константы механики ловушек и случайных событий.
+TRAP_DAMAGE_MODULO = 10
+TRAP_DEFEAT_THRESHOLD = 3
+TRAP_DAMAGE_SEED_OFFSET = 7
+EVENT_TRIGGER_MODULO = 10
+EVENT_TRIGGER_VALUE = 0
+EVENT_TRIGGER_SEED_OFFSET = 3
+EVENT_TYPE_MODULO = 3
+EVENT_TYPE_SEED_OFFSET = 11
+
+# Награды и альтернативные ответы для загадок.
+PUZZLE_REWARDS = {
+    "hall": "silver_coin",
+    "trap_room": "gear_token",
+    "library": "treasure_key",
+}
+
+ALTERNATIVE_ANSWERS = {
+    "10": {"10", "десять"},
+    "шаг шаг шаг": {"шаг шаг шаг"},
+    "резонанс": {"резонанс"},
+}
+
 ROOMS = {
     "entrance": {
         "description": (
