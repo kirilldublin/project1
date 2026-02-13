@@ -49,7 +49,7 @@ make lint
 ## Демонстрация (asciinema)
 
 ```markdown
-[![asciicast](https://asciinema.org/a/<ID>.svg)](https://asciinema.org/a/LP3deYaWukb14guv)
+[![asciicast](https://asciinema.org/a/LP3deYaWukb14guv.svg)](https://asciinema.org/a/LP3deYaWukb14guv)
 ```
 
 ## Структура проекта
