@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from labyrinth_game.constants import COMMANDS
 from labyrinth_game.player_actions import (
     get_input,
     move_player,
@@ -15,7 +16,7 @@ from labyrinth_game.utils import (
 )
 
 
-def process_command(game_state: dict, command_line: str) -> None:
+def process_command(game_state: dict, command_line: str, commands: dict) -> None:
     raw_parts = command_line.strip().lower().split(maxsplit=1)
 
     if not raw_parts:
@@ -29,6 +30,8 @@ def process_command(game_state: dict, command_line: str) -> None:
             describe_current_room(game_state)
         case "go":
             move_player(game_state, argument)
+        case "north" | "south" | "east" | "west":
+            move_player(game_state, command)
         case "take":
             take_item(game_state, argument)
         case "use":
@@ -41,7 +44,7 @@ def process_command(game_state: dict, command_line: str) -> None:
             else:
                 solve_puzzle(game_state)
         case "help":
-            show_help()
+            show_help(commands)
         case "quit" | "exit":
             game_state["game_over"] = True
             print("Игра завершена.")
@@ -63,7 +66,7 @@ def main() -> None:
 
     while not game_state["game_over"]:
         command_line = get_input("> ")
-        process_command(game_state, command_line)
+        process_command(game_state, command_line, COMMANDS)
 
 
 if __name__ == "__main__":

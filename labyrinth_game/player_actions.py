@@ -31,12 +31,22 @@ def move_player(game_state: dict, direction: str) -> None:
         print("Нельзя пойти в этом направлении.")
         return
 
-    game_state["current_room"] = room["exits"][normalized_direction]
+    next_room = room["exits"][normalized_direction]
+    has_rusty_key = "rusty_key" in game_state["player_inventory"]
+    if next_room == "treasure_room" and not has_rusty_key:
+        print("Дверь заперта. Нужен ключ, чтобы пройти дальше.")
+        return
+
+    if next_room == "treasure_room":
+        print("Вы используете найденный ключ, чтобы открыть путь в комнату сокровищ.")
+
+    game_state["current_room"] = next_room
     game_state["steps_taken"] += 1
 
-    from labyrinth_game.utils import describe_current_room
+    from labyrinth_game.utils import describe_current_room, random_event
 
     describe_current_room(game_state)
+    random_event(game_state)
 
 
 def take_item(game_state: dict, item_name: str) -> None:
